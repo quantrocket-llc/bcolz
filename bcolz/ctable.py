@@ -27,7 +27,7 @@ _inttypes += (np.integer,)
 ROOTDIRS = '__rootdirs__'
 
 re_ident = re.compile(r"^[^\d\W]\w*$", re.UNICODE)
-re_str_split = re.compile("^\s+|\s*,\s*|\s+$")
+re_str_split = re.compile(r"^\s+|\s*,\s*|\s+$")
 
 
 def validate_names(columns, keyword='names'):
@@ -690,7 +690,7 @@ class ctable(object):
             del ckwargs['rootdir']
         for key in names:
             vals = df[key].values  # just a view as a numpy array
-            if vals.dtype == np.object:
+            if vals.dtype == object:
                 inferred_type = pd.api.types.infer_dtype(vals)
                 if inferred_type == 'unicode':
                     maxitemsize = max(len(i) for i in vals)

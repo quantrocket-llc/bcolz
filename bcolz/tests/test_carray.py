@@ -67,9 +67,9 @@ class initTest(TestCase):
             'a': np.arange(3),
             'b': np.arange(3)[::-1]
         })
-        ca = carray(df, dtype=np.dtype(np.float))
+        ca = carray(df, dtype=np.dtype(float))
         assert_array_equal(df, ca)
-        self.assertEqual(ca.dtype, np.dtype(np.float),
+        self.assertEqual(ca.dtype, np.dtype(float),
                          msg='carray has been created with invalid dtype')
 
     def test_dtype_None(self):
@@ -126,9 +126,9 @@ class pickleTest(MayBeDiskTest):
             self.assertIsInstance(s, bytes)
         if self.disk:
             b2 = pickle.loads(s)
-            # this should probably be self.assertEquals(b, b2)
+            # this should probably be self.assertEqual(b, b2)
             # but at the time == didn't work
-            self.assertEquals(b2.rootdir, b.rootdir)
+            self.assertEqual(b2.rootdir, b.rootdir)
 
 
 class pickleTestDisk(pickleTest):
@@ -2449,7 +2449,7 @@ class chunksIterTest(MayBeDiskTest):
                                a[n * chunklen_:(n + 1) * chunklen_],
                                "iter chunks not working correctly")
 
-        self.assertEquals(n, len(a) // chunklen_ - 1)
+        self.assertEqual(n, len(a) // chunklen_ - 1)
 
 
 class chunksIterMemoryTest(chunksIterTest, TestCase):
@@ -2477,14 +2477,14 @@ class ContextManagerTest(MayBeDiskTest, TestCase):
 
         with bcolz.open(self.rootdir, mode='r') as xreadonly:
             sxreadonly = sum(i for i in xreadonly)
-        self.assertEquals(sx, sxreadonly)
+        self.assertEqual(sx, sxreadonly)
 
 
 class nleftoversTest(TestCase):
 
     def test_empty(self):
         a = carray([])
-        self.assertEquals(0, a.nleftover)
+        self.assertEqual(0, a.nleftover)
 
     def test_one(self):
         a = carray([1])
