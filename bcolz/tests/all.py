@@ -45,7 +45,7 @@ relatively modern CPU and around 300 MB of RAM and 500 MB of disk
     print('-=' * 38)
 
 
-def test(verbose=False, heavy=False):
+def test(verbose=False, heavy=False, failfast=False):
     """
     test(verbose=False, heavy=False)
 
@@ -66,7 +66,7 @@ def test(verbose=False, heavy=False):
     oldverbose, common.verbose = common.verbose, verbose
     oldheavy, common.heavy = common.heavy, heavy
     try:
-        ret = unittest.TextTestRunner().run(suite())
+        ret = unittest.TextTestRunner(verbosity=2, failfast=failfast).run(suite())
         sys.exit(ret.wasSuccessful() == False)
     finally:
         common.verbose = oldverbose
