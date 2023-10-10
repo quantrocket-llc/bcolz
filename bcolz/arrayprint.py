@@ -16,7 +16,7 @@ __docformat__ = 'restructuredtext'
 # adapted by Francesc Alted 2012-8-18 for bcolz
 
 import sys
-from pkg_resources import parse_version
+from packaging.version import parse as parse_version
 
 import numpy
 from numpy.core import numerictypes as _nt

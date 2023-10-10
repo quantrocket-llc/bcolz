@@ -20,7 +20,7 @@ from glob import glob
 import sys
 
 from setuptools import setup, Extension, find_packages
-from pkg_resources import resource_filename
+import importlib.resources
 
 # For guessing the capabilities of the CPU for C-Blosc
 try:
@@ -66,9 +66,9 @@ class LazyCommandClass(dict):
                 may be run before numpy has been installed, in which case
                 importing numpy and calling `numpy.get_include()` will fail.
                 """
-                numpy_incl = resource_filename('numpy', 'core/include')
+                numpy_incl = importlib.resources.files('numpy') / 'core/include'
                 for ext in self.extensions:
-                    ext.include_dirs.append(numpy_incl)
+                    ext.include_dirs.append(str(numpy_incl))
 
                 # This explicitly calls the superclass method rather than the
                 # usual super() invocation because distutils' build_class, of

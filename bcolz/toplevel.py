@@ -16,7 +16,7 @@ import os
 import os.path
 import glob
 import itertools as it
-from pkg_resources import parse_version
+from packaging.version import parse as parse_version
 
 import numpy as np
 import bcolz

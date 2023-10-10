@@ -16,8 +16,7 @@ import shutil
 import textwrap
 import pickle
 import ctypes
-from pkg_resources import parse_version
-import inspect
+from packaging.version import parse as parse_version
 
 import numpy as np
 from numpy.testing import (

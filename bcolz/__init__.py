@@ -18,7 +18,7 @@ The compression process is carried out internally by Blosc,
 a high-performance compressor that is optimized for binary data.
 
 """
-from pkg_resources import parse_version
+from packaging.version import parse as parse_version
 
 # Filters
 NOSHUFFLE = 0
