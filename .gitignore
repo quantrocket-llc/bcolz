@@ -5,6 +5,9 @@ build/
 *.c
 *.so
 bcolz/_version.py
+bcolz/version.py
 .idea/
 __pycache__/
 rebuild-cython.sh
+.eggs
+*.egg-info
