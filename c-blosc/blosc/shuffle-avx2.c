@@ -3,16 +3,29 @@
 
   Author: Francesc Alted <francesc@blosc.org>
 
-  See LICENSES/BLOSC.txt for details about copyright and rights to use.
+  See LICENSE.txt for details about copyright and rights to use.
 **********************************************************************/
 
 #include "shuffle-generic.h"
 #include "shuffle-avx2.h"
 
-/* Make sure AVX2 is available for the compilation target and compiler. */
+/* Define dummy functions if AVX2 is not available for the compilation target and compiler. */
 #if !defined(__AVX2__)
-  #error AVX2 is not supported by the target architecture/platform and/or this compiler.
-#endif
+#include <stdlib.h>
+
+void
+blosc_internal_shuffle_avx2(const size_t bytesoftype, const size_t blocksize,
+                            const uint8_t* const _src, uint8_t* const _dest) {
+  abort();
+}
+
+void
+blosc_internal_unshuffle_avx2(const size_t bytesoftype, const size_t blocksize,
+                              const uint8_t* const _src, uint8_t* const _dest) {
+  abort();
+}
+
+#else /* defined(__AVX2__) */
 
 #include <immintrin.h>
 
@@ -638,14 +651,14 @@ unshuffle16_tiled_avx2(uint8_t* const dest, const uint8_t* const src,
 
 /* Shuffle a block.  This can never fail. */
 void
-shuffle_avx2(const size_t bytesoftype, const size_t blocksize,
-             const uint8_t* const _src, uint8_t* const _dest) {
+blosc_internal_shuffle_avx2(const size_t bytesoftype, const size_t blocksize,
+                            const uint8_t* const _src, uint8_t* const _dest) {
   const size_t vectorized_chunk_size = bytesoftype * sizeof(__m256i);
 
   /* If the block size is too small to be vectorized,
      use the generic implementation. */
   if (blocksize < vectorized_chunk_size) {
-    shuffle_generic(bytesoftype, blocksize, _src, _dest);
+    blosc_internal_shuffle_generic(bytesoftype, blocksize, _src, _dest);
     return;
   }
 
@@ -681,7 +694,7 @@ shuffle_avx2(const size_t bytesoftype, const size_t blocksize,
     }
     else {
       /* Non-optimized shuffle */
-      shuffle_generic(bytesoftype, blocksize, _src, _dest);
+      blosc_internal_shuffle_generic(bytesoftype, blocksize, _src, _dest);
       /* The non-optimized function covers the whole buffer,
          so we're done processing here. */
       return;
@@ -698,14 +711,14 @@ shuffle_avx2(const size_t bytesoftype, const size_t blocksize,
 
 /* Unshuffle a block.  This can never fail. */
 void
-unshuffle_avx2(const size_t bytesoftype, const size_t blocksize,
-               const uint8_t* const _src, uint8_t* const _dest) {
+blosc_internal_unshuffle_avx2(const size_t bytesoftype, const size_t blocksize,
+                              const uint8_t* const _src, uint8_t* const _dest) {
   const size_t vectorized_chunk_size = bytesoftype * sizeof(__m256i);
 
   /* If the block size is too small to be vectorized,
      use the generic implementation. */
   if (blocksize < vectorized_chunk_size) {
-    unshuffle_generic(bytesoftype, blocksize, _src, _dest);
+    blosc_internal_unshuffle_generic(bytesoftype, blocksize, _src, _dest);
     return;
   }
 
@@ -741,7 +754,7 @@ unshuffle_avx2(const size_t bytesoftype, const size_t blocksize,
     }
     else {
       /* Non-optimized unshuffle */
-      unshuffle_generic(bytesoftype, blocksize, _src, _dest);
+      blosc_internal_unshuffle_generic(bytesoftype, blocksize, _src, _dest);
       /* The non-optimized function covers the whole buffer,
          so we're done processing here. */
       return;
@@ -755,3 +768,5 @@ unshuffle_avx2(const size_t bytesoftype, const size_t blocksize,
     unshuffle_generic_inline(bytesoftype, vectorizable_bytes, blocksize, _src, _dest);
   }
 }
+
+#endif /* !defined(__AVX2__) */

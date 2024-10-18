@@ -6,7 +6,7 @@
   Creation date: 2010-06-07
   Author: Francesc Alted <francesc@blosc.org>
 
-  See LICENSES/BLOSC.txt for details about copyright and rights to use.
+  See LICENSE.txt for details about copyright and rights to use.
 **********************************************************************/
 
 #include "test_common.h"
@@ -31,6 +31,28 @@ static const char *test_cbuffer_sizes(void) {
   mu_assert("ERROR: nbytes incorrect(2)", nbytes_ == nbytes);
   mu_assert("ERROR: cbytes incorrect", cbytes == cbytes_);
   mu_assert("ERROR: blocksize incorrect", blocksize >= 128);
+  return 0;
+}
+
+static const char *test_get_complib_info(void) {
+  char *complib, *version;
+  int clibcode;
+
+  clibcode = blosc_get_complib_info("blosclz", &complib, &version);
+  mu_assert("ERROR: complib incorrect", strcmp(complib, "BloscLZ") == 0);
+  mu_assert("ERROR: clibcode incorrect", clibcode == 0);
+  free(complib);
+  free(version);
+  clibcode = blosc_get_complib_info("non-existing", &complib, &version);
+  mu_assert("ERROR: complib should be NULL", complib == NULL);
+  mu_assert("ERROR: clibcode incorrect", clibcode == -1);
+  clibcode = blosc_get_complib_info("blosclz", NULL, NULL);
+  mu_assert("ERROR: clibcode incorrect", clibcode == 0);
+  clibcode = blosc_get_complib_info("blosclz", NULL, &version);
+  mu_assert("ERROR: clibcode incorrect", clibcode == 0);
+  clibcode = blosc_get_complib_info("blosclz", &complib, NULL);
+  mu_assert("ERROR: complib incorrect", strcmp(complib, "BloscLZ") == 0);
+  mu_assert("ERROR: clibcode incorrect", clibcode == 0);
   return 0;
 }
 
@@ -95,6 +117,7 @@ static char *test_set_splitmode() {
 
 static const char *all_tests(void) {
   mu_run_test(test_cbuffer_sizes);
+  mu_run_test(test_get_complib_info);
   mu_run_test(test_cbuffer_metainfo);
   mu_run_test(test_cbuffer_versions);
   mu_run_test(test_cbuffer_complib);

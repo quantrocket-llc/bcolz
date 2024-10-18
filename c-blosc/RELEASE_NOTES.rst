@@ -2,9 +2,280 @@
  Release notes for C-Blosc
 ===========================
 
-:Author: Francesc Alted
-:Contact: francesc@blosc.org
-:URL: http://www.blosc.org
+Changes from 1.21.6 to 1.21.7
+=============================
+
+#XXX version-specific blurb XXX#
+
+
+Changes from 1.21.5 to 1.21.6
+=============================
+
+* Zlib updated to 1.3.1.  Thanks to Lachlan Deakin.
+* Zstd updated to 1.5.6
+* Fixed many typos.  Thanks to Dimitri Papadopoulos.
+
+
+Changes from 1.21.4 to 1.21.5
+=============================
+
+
+* Fix SSE2/AVX2 build issue.  Fixes #352. Thanks to Thomas VINCENT
+  and Mark Kittisopikul.
+
+
+Changes from 1.21.3 to 1.21.4
+=============================
+
+* Upgrade internal-complib zstd from 1.5.2 to 1.5.5.
+
+* Zlib updated to 1.2.13.
+
+
+Changes from 1.21.2 to 1.21.3
+=============================
+
+* Internal LZ4 codec updated to 1.9.4.
+
+* Internal BloscLZ codec updated to 2.5.1.
+
+
+Changes from 1.21.1 to 1.21.2
+=============================
+
+* Add support for SHUFFLE_AVX2_ENABLED and SHUFFLE_SSE2_ENABLED
+  even if AVX2 or SSE2 is not available.  See PR #347. Thanks to
+  Thomas VINCENT.
+
+* Upgrade internal-complib zstd from 1.5.0 to 1.5.2.  Thanks to
+  Mark Kittisopikul.
+
+* Many small code improvements, improved consistency and typo fixes.
+  Thanks to Dimitri Papadopoulos Orfanos.
+
+* New HIDE_SYMBOLS CMake option to control the symbols exposure.
+  Default is ON.  Thanks to Mariusz Zaborski.
+
+
+Changes from 1.21.0 to 1.21.1
+=============================
+
+* Fix pthread flag when linking on ppc64le.  See #318.  Thanks to Axel Huebl.
+
+* Updates in codecs (some bring important performance improvements):
+  * BloscLZ updated to 2.5.1
+  * Zlib updated to 1.2.11
+  * Zstd updated to 1.5.0
+
+
+Changes from 1.20.1 to 1.21.0
+=============================
+
+* Updated zstd codec to 1.4.8.
+
+* Updated lz4 codec to 1.9.3.
+
+* New instructions on how to use the libraries in python-blosc wheels
+  so as to compile C-Blosc applications.  See:
+  https://github.com/Blosc/c-blosc/blob/master/COMPILING_WITH_WHEELS.rst
+
+
+Changes from 1.20.0 to 1.20.1
+=============================
+
+* Added `<unistd.h>` in vendored zlib 1.2.8 for compatibility with Python 3.8
+  in recent Mac OSX.  For details, see:
+  https://github.com/Blosc/python-blosc/issues/229
+
+
+Changes from 1.19.1 to 1.20.0
+=============================
+
+* More safety checks have been implemented so that potential flaws
+  discovered by new fuzzers in OSS-Fuzzer are fixed now.  Thanks to
+  Nathan Moinvaziri (@nmoinvaz).
+
+* BloscLZ updated to 2.3.0. Expect better compression ratios for faster
+  codecs.  For details, see our new blog post:
+  https://blosc.org/posts/beast-release/
+
+* Fixed the `_xgetbv()` collision. Thanks to Michał Górny (@mgorny).
+
+* The chunk format has been fully described so that 3rd party software
+  may come with a different implementation, but still compatible with
+  C-Blosc chunks.
+
+
+Changes from 1.19.0 to 1.19.1
+=============================
+
+- pthread_create() errors are now handled and propagated back to the user.
+  See https://github.com/Blosc/c-blosc/pull/299.
+
+
+Changes from 1.18.1 to 1.19.0
+=============================
+
+- The length of automatic blocksizes for fast codecs (lz4, blosclz) has
+  been incremented quite a bit (up to 256 KB) for better compression ratios.
+  The performance in modern CPUs (with at least 256 KB in L2 cache) should
+  be better too (for older CPUs the performance should stay roughly the same).
+
+- Continuous integration has been migrated to GitHub actions and much
+  more scenarios are tested (specially linking with external codecs).
+  Also, a new OSS-Fuzz workflow has been added for increased detection
+  of possible vulnerabilities.  Thanks to Nathan Moinvaziri.
+
+- For small buffers that cannot be compressed (typically < 128 bytes),
+  `blosc_compress()` returns now a 0 (cannot compress) instead of a negative
+  number (internal error).  See https://github.com/Blosc/c-blosc/pull/294.
+  Thanks to @kalvdans for providing the initial patch.
+
+- blosclz codec updated to 2.1.0.  Expect better compression ratios and
+  performance in a wider variety of scenarios.
+
+- `blosc_decompress_unsafe()`, `blosc_decompress_ctx_unsafe()` and
+  `blosc_getitem_unsafe()` have been removed because they are dangerous
+  and after latest improvements, they should not be used in production.
+
+- zstd codec updated to 1.4.5.
+
+- Conan packaging has been deprecated (from now on, we should try
+  to focus on supporting wheels only).
+
+
+Changes from 1.17.1 to 1.18.1
+=============================
+
+- Fixed the copy of the leftovers of a chunk when its size is not a
+  multiple of the typesize.  Although this is a very unusual situation,
+  it can certainly happen (e.g.
+  https://github.com/Blosc/python-blosc/issues/220).
+
+
+Changes from 1.17.0 to 1.17.1
+=============================
+
+- Zstd codec updated to 1.4.4.
+
+- LZ4 codec updated to 1.9.2.
+
+
+Changes from 1.16.3 to 1.17.0
+=============================
+
+- LZ4 codec updated to 1.9.1.
+
+- Zstd codec updated to 1.4.1.
+
+- BloscLZ codec updated to 2.0.0.  Although this should be fully backward
+  compatible, it contains important changes that affects mainly speed, but
+  also compression ratios.  Feedback on how it behaves on your own data is
+  appreciated.
+
+
+Changes from 1.16.2 to 1.16.3
+=============================
+
+- Fix for building for clang with -march=haswell. See PR #262.
+
+- Fix all the known warnings for GCC/Clang.  Still some work to do for MSVC
+  in this front.
+
+- Due to some problems with several CI systems, the check for library symbols
+  are deactivated now by default.  If you want to enforce this check, use:
+  `cmake .. -DDEACTIVATE_SYMBOLS_CHECK=ON` to re-activate it.
+
+
+Changes from 1.16.1 to 1.16.2
+=============================
+
+- Correct the check for the compressed size when the buffer is memcpyed.  This
+  was a regression introduced in 1.16.0.  Fixes #261.
+
+
+Changes from 1.16.0 to 1.16.1
+=============================
+
+- Fixed a regression in 1.16.0 that prevented to compress empty buffers
+  (see #260).
+
+- Zstd updated to 1.3.8 (from 1.3.7).
+
+
+Changes from 1.15.1 to 1.16.0
+=============================
+
+- Now the functions that execute Blosc decompressions are safe by default
+  for untrusted/possibly corrupted inputs.  The additional checks seem to
+  not affect performance significantly (see some benchmarks in #258), so
+  this is why they are the default now.
+
+  The previous functions (with less safety) checks are still available with a
+  '_unsafe' suffix.  The complete list is:
+
+    - blosc_decompress_unsafe()
+    - blosc_decompress_ctx_unsafe()
+    - blosc_getitem_unsafe()
+
+  Also, a new API function named blosc_cbuffer_validate(), for validating Blosc
+  compressed data, has been added.
+
+  For details, see PR #258.  Thanks to Jeremy Maitin-Shepard.
+
+- Fixed a bug in `blosc_compress()` that could lead to thread deadlock under
+  some situations.  See #251.  Thanks to @wenjuno for the report and the fix.
+
+- Fix data race in shuffle.c host_implementation initialization.  Fixes #253.
+  Thanks to Jeremy Maitin-Shepard.
+
+
+Changes from 1.15.0 to 1.15.1
+=============================
+
+- Add workaround for Visual Studio 2008's lack of a `stdint.h` file to
+  `blosclz.c`.
+
+
+Changes from 1.14.4 to 1.15.0
+=============================
+
+- The `blosc_compress()` and `blosc_decompress()` interfaces are now
+  fork-safe, preventing child-process deadlocks in fork-based
+  multiprocessing applications. These interfaces with BLOSC_NOLOCK were, and
+  continue to be, fork-safe. `_ctx` interface context reuse continues to be
+  unsafe in the child process post-fork. See #241.  Thanks to Alex Ford.
+
+- Replaced //-comments with /**/-comments and other improvements for
+  compatibility with quite old gcc compilers.  See PR #243.  Thanks to
+  Andreas Martin.
+
+- Empty buffers can be compressed again (this was inadvertently prevented while
+  fixing #234).  See #247.  Thanks to Valentin Haenel.
+
+- LZ4 internal codec upgraded to 1.8.3 (from 1.8.1.2).
+
+- Zstd internal codec upgraded to 1.3.7 (from 1.3.4).
+
+
+Changes from 1.14.3 to 1.14.4
+=============================
+
+- Added a new `DEACTIVATE_SSE2` option for cmake that is useful for disabling
+  SSE2 when doing cross-compilation (see #236).
+
+- New check for detecting output buffers smaller than BLOSC_MAX_OVERHEAD.
+  Fixes #234.
+
+- The `complib` and `version` parameters for `blosc_get_complib_info()` can be
+  safely set to NULL now.  This allows to call this function even if the user is
+  not interested in these parameters (so no need to reserve memory for them).
+  Fixes #228.
+
+- In some situations that a supposedly blosc chunk is passed to
+  `blosc_decompress()`, one might end with an `Arithmetic exception`.  This
+  is probably due to the chunk not being an actual blosc chunk, and divisions
+  by zero might occur.  A protection has been added for this. See #237.
 
 
 Changes from 1.14.2 to 1.14.3
@@ -60,7 +331,7 @@ Changes from 1.13.7 to 1.14.0
   https://github.com/Blosc/c-blosc/blob/master/blosc/blosc.h#L209
 
   There is a dedicated blog entry about this at:
-  http://blosc.org/posts/new-forward-compat-policy/
+  https://www.blosc.org/posts/new-forward-compat-policy/
   More info in PR #216.
 
   Caveat Emptor: Note that Blosc versions from 1.11.0 to 1.14.0 *might*
@@ -83,8 +354,8 @@ Changes from 1.13.7 to 1.14.0
     $ ./simple
     Blosc version info: 1.14.0.dev ($Date:: 2018-02-15 #$)
     Compression: 4000000 -> 41384 (96.7x)
-    Decompression succesful!
-    Succesful roundtrip!
+    Decompression successful!
+    Successful roundtrip!
 
   and here with the BLOSC_PRINT_SHUFFLE_ACCEL environment variable set::
 
@@ -104,8 +375,8 @@ Changes from 1.13.7 to 1.14.0
     YMM state enabled: True
     ZMM state enabled: False
     Compression: 4000000 -> 41384 (96.7x)
-    Decompression succesful!
-    Succesful roundtrip!
+    Decompression successful!
+    Successful roundtrip!
 
   Blosc only currently leverages the SSE2 and AVX2 instruction sets, but
   it can recognize all of the above.  This is useful mainly for debugging.
@@ -180,7 +451,7 @@ Changes from 1.12.0 to 1.12.1
 - Backported BloscLZ parameters that were fine-tuned for C-Blosc2.
   You should expect better compression ratios and faster operation,
   specially on modern CPUs.  See:
-  http://blosc.org/posts/blosclz-tuning/
+  https://www.blosc.org/posts/blosclz-tuning/
 
 
 Changes from 1.11.3 to 1.12.0
@@ -274,7 +545,7 @@ Changes from 1.9.3 to 1.10.0
   Blosc.
 
   Although the Zstd format is considered stable
-  (http://fastcompression.blogspot.com.es/2016_07_03_archive.html), its API is
+  (https://fastcompression.blogspot.com/2016_07_03_archive.html), its API is
   maturing very fast, and despite passing the extreme test suite for C-Blosc,
   this codec should be considered in beta for C-Blosc usage purposes. Please
   test it and report back any possible issues you may get.
@@ -344,7 +615,7 @@ Changes from 1.8.1 to 1.9.0
 * In the same vein, from now on, when the BLOSC_NTHREADS environment
   variable is set to an integer, every call to blosc_compress() and
   blosc_decompress() will call blosc_set_nthreads(BLOSC_NTHREADS)
-  before the actuall compression/decompression process.  See blosc.h
+  before the actual compression/decompression process.  See blosc.h
   for details.
 
 * Finally, if BLOSC_CLEVEL, BLOSC_SHUFFLE, BLOSC_TYPESIZE and/or
@@ -622,7 +893,7 @@ Changes from 1.3.6 to 1.4.0
   tests pass here.
 
 * Architectures requiring strict access alignment are supported as well.
-  Due to this, arquitectures with a high penalty in accessing unaligned
+  Due to this, architectures with a high penalty in accessing unaligned
   data (e.g. Raspberry Pi, ARMv6) can compress up to 2.5x faster.
 
 * LZ4 has been updated to r119 (1.2.0) so as to fix a possible security
@@ -635,7 +906,7 @@ Changes from 1.3.5 to 1.3.6
 * Updated to LZ4 r118 due to a (highly unlikely) security hole.  For
   details see:
 
-  http://fastcompression.blogspot.fr/2014/06/debunking-lz4-20-years-old-bug-myth.html
+  http://blog.securitymouse.com/2014/06/raising-lazarus-20-year-old-bug-that.html
 
 
 Changes from 1.3.4 to 1.3.5
@@ -691,21 +962,21 @@ Changes from 1.2.4 to 1.3.0
 
 A nice handful of compressors have been added to Blosc:
 
-* LZ4 (http://code.google.com/p/lz4/): A very fast
+* LZ4 (https://lz4.org/: A very fast
   compressor/decompressor.  Could be thought as a replacement of the
   original BloscLZ, but it can behave better is some scenarios.
 
-* LZ4HC (http://code.google.com/p/lz4/): This is a variation of LZ4
+* LZ4HC (https://lz4.org/): This is a variation of LZ4
   that achieves much better compression ratio at the cost of being
   much slower for compressing.  Decompression speed is unaffected (and
   sometimes better than when using LZ4 itself!), so this is very good
   for read-only datasets.
 
-* Snappy (http://code.google.com/p/snappy/): A very fast
+* Snappy (https://google.github.io/snappy/): A very fast
   compressor/decompressor.  Could be thought as a replacement of the
   original BloscLZ, but it can behave better is some scenarios.
 
-* Zlib (http://www.zlib.net/): This is a classic.  It achieves very
+* Zlib (https://zlib.net/): This is a classic.  It achieves very
   good compression ratios, at the cost of speed.  However,
   decompression speed is still pretty good, so it is a good candidate
   for read-only datasets.
@@ -751,7 +1022,7 @@ Changes from 1.2.1 to 1.2.2
 - The `bench/bench.c` has been updated so that it can be compiled on
   Windows again.
 
-- The new web site has been set to: http://www.blosc.org
+- The new web site has been set to: https://www.blosc.org
 
 
 Changes from 1.2 to 1.2.1
@@ -873,13 +1144,11 @@ Changes from 1.0 to 1.1
 - Fixed a problem with the computation of the blocksize in the Blosc
   filter for HDF5.
 
-- Fixed a problem with large datatypes.  See
-  http://www.pytables.org/trac/ticket/288 for more info.
+- Fixed a problem with large datatypes.
 
 - Now Blosc is able to work well even if you fork an existing process
   with a pool of threads.  Bug discovered when PyTables runs in
-  multiprocess environments.  See http://pytables.org/trac/ticket/295
-  for details.
+  multiprocess environments.
 
 - Added a new `blosc_getitem()` call to allow the retrieval of items in
   sizes smaller than the complete buffer.  That is useful for the carray
@@ -959,7 +1228,7 @@ Changes from 0.8.0 to 0.9
   info.
 
 - Added a protection for MacOSX so that it has to not link against
-  posix_memalign() funtion, which seems not available in old versions of
+  posix_memalign() function, which seems not available in old versions of
   MacOSX (for example, Tiger).  At nay rate, posix_memalign() is not
   necessary on Mac because 16 bytes alignment is ensured by default.
   Thanks to Ivan Vilata.  Fixes #3.

@@ -6,7 +6,7 @@
   Creation date: 2018-02-16
   Author: Elvis Stansvik, Francesc Alted <francesc@blosc.org>
 
-  See LICENSES/BLOSC.txt for details about copyright and rights to use.
+  See LICENSE.txt for details about copyright and rights to use.
 **********************************************************************/
 
 #include <stdio.h>
@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
     /* Compress with clevel=9 and shuffle active  */
     csize = blosc_compress(9, 1, sizeof(int32_t), isize, data, data_out, osize);
     if (csize == 0) {
-      printf("Buffer is uncompressible.  Giving up.\n");
+      printf("Buffer is incompressible.  Giving up.\n");
       return 1;
     } else if (csize < 0) {
       printf("Compression error.  Error code: %d\n", csize);
@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
 
     /* Write data_out to argv[3] */
     f = fopen(argv[3], "wb+");
-    if (fwrite(data_out, 1, (size_t) csize, f) == SIZE) {
+    if (fwrite(data_out, 1, (size_t) csize, f) == csize) {
       printf("Wrote %s\n", argv[3]);
     } else {
       printf("Write failed");
@@ -100,7 +100,7 @@ int main(int argc, char *argv[]) {
       return dsize;
     }
 
-    printf("Decompression succesful!\n");
+    printf("Decompression successful!\n");
   }
 
   /* After using it, destroy the Blosc environment */

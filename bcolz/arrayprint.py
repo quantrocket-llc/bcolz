@@ -16,20 +16,29 @@ __docformat__ = 'restructuredtext'
 # adapted by Francesc Alted 2012-8-18 for bcolz
 
 import sys
-from packaging.version import parse as parse_version
+from packaging.version import Version
 
 import numpy
-from numpy.core import numerictypes as _nt
 from numpy import maximum, minimum, absolute, not_equal, isnan, isinf
-from numpy.core.multiarray import format_longfloat
-from numpy.core.fromnumeric import ravel
 from .py2help import xrange
+
+# Workaround using Numy's internal API for compatibilty with both numpy<2 and numpy>=2.
+try:
+    from numpy.core import numerictypes as _nt
+    import numpy.core.numeric as _nc
+    from numpy.core.multiarray import format_longfloat
+    from numpy.core.fromnumeric import ravel
+except ImportError:
+    from numpy._core import numerictypes as _nt
+    import numpy._core.numeric as _nc
+    from numpy._core.multiarray import format_longfloat
+    from numpy._core.fromnumeric import ravel
 
 
 try:
-    from numpy.core.multiarray import datetime_as_string, datetime_data
+    from numpy._core.multiarray import datetime_as_string, datetime_data
 except ImportError:
-    pass
+    from numpy.core.multiarray import datetime_as_string, datetime_data
 
 
 def product(x, y):
@@ -213,7 +222,7 @@ def get_printoptions():
 
 
 def _leading_trailing(a):
-    import numpy.core.numeric as _nc
+    import numpy._core.numeric as _nc
 
     if a.ndim == 1:
         if len(a) > 2 * _summaryEdgeItems:
@@ -326,7 +335,7 @@ def _array2string(a, max_line_width, precision, suppress_small, separator=' ',
                 format_function = formatdict['longcomplexfloat']
             else:
                 format_function = formatdict['complexfloat']
-        elif issubclass(dtypeobj, (_nt.unicode_, _nt.string_)):
+        elif issubclass(dtypeobj, (_nt.str_, _nt.bytes_)):
             format_function = formatdict['numpystr']
         elif (hasattr(_nt, "datetime64") and
               issubclass(dtypeobj, _nt.datetime64)):
@@ -346,7 +355,7 @@ def _array2string(a, max_line_width, precision, suppress_small, separator=' ',
 
 
 def _convert_arrays(obj):
-    import numpy.core.numeric as _nc
+    import numpy._core.numeric as _nc
 
     newtup = []
     for k in obj:
@@ -569,8 +578,6 @@ class FloatFormat(object):
             pass
 
     def fillFormat(self, data):
-        import numpy.core.numeric as _nc
-
         errstate = _nc.seterr(all='ignore')
         try:
             special = isnan(data) | isinf(data)
@@ -623,7 +630,7 @@ class FloatFormat(object):
         self.format = format
 
     def __call__(self, x, strip_zeros=True):
-        import numpy.core.numeric as _nc
+        import numpy._core.numeric as _nc
 
         err = _nc.seterr(invalid='ignore')
         try:
@@ -764,7 +771,7 @@ class DatetimeFormat(object):
         # If timezone is default, make it 'naive' or 'UTC' depending on
         # the numpy version
         if (timezone is None and
-            parse_version(numpy.__version__) >= parse_version("1.11")):
+            Version(numpy.__version__) >= Version("1.11")):
             timezone = "naive"
         else:
             timezone = "UTC"

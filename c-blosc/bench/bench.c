@@ -7,7 +7,7 @@
 
   For usage instructions of this benchmark, please see:
 
-    http://blosc.org/synthetic-benchmarks.html
+    https://www.blosc.org/pages/synthetic-benchmarks/
 
   I'm collecting speeds for different machines, so the output of your
   benchmarks and your processor specifications are welcome!
@@ -19,7 +19,7 @@
 
   > cl /DHAVE_LZ4 /arch:SSE2 /Ox /Febench.exe /Iblosc /Iinternal-complibs\lz4-1.7.5 bench\bench.c blosc\blosc.c blosc\blosclz.c blosc\shuffle.c blosc\shuffle-sse2.c blosc\shuffle-generic.c blosc\bitshuffle-generic.c blosc\bitshuffle-sse2.c internal-complibs\lz4-1.7.5\*.c
 
-  See LICENSES/BLOSC.txt for details about copyright and rights to use.
+  See LICENSE.txt for details about copyright and rights to use.
 **********************************************************************/
 
 #include <stdlib.h>
@@ -215,12 +215,13 @@ void do_bench(char *compressor, char *shuffle, int nthreads, int size, int elsiz
      if (retcode) abort();
   }
 
-  fprintf(ofile, "--> %d, %d, %d, %d, %s, %s\n", nthreads, size, elsize, rshift, compressor, shuffle);
+  fprintf(ofile, "--> %d, %d, %d, %d, %s, %s\n", nthreads, size, elsize,
+          rshift, compressor, shuffle);
   fprintf(ofile, "********************** Run info ******************************\n");
   fprintf(ofile, "Blosc version: %s (%s)\n", BLOSC_VERSION_STRING, BLOSC_VERSION_DATE);
   fprintf(ofile, "Using synthetic data with %d significant bits (out of 32)\n", rshift);
   fprintf(ofile, "Dataset size: %d bytes\tType size: %d bytes\n", size, elsize);
-  fprintf(ofile, "Working set: %.1f MB\t\t", (size*nchunks) / (float)MB);
+  fprintf(ofile, "Working set: %.1f MB\t\t", (size * nchunks) / (float)MB);
   fprintf(ofile, "Number of threads: %d\n", nthreads);
   fprintf(ofile, "********************** Running benchmarks *********************\n");
 
@@ -376,10 +377,10 @@ int main(int argc, char *argv[]) {
   int extreme_suite = 0;
   int debug_suite = 0;
   int nthreads = 4;                     /* The number of threads */
-  int size = 2*MB;                      /* Buffer size */
+  int size = 4 * MB;                    /* Buffer size */
   int elsize = 8;                       /* Datatype size */
   int rshift = 19;                      /* Significant bits */
-  int workingset = 256*MB;              /* The maximum allocated memory */
+  int workingset = 256 * MB;            /* The maximum allocated memory */
   int nthreads_, size_, elsize_, rshift_, i;
   FILE * output_file = stdout;
   blosc_timestamp_t last, current;

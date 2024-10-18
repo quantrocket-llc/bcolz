@@ -10,6 +10,10 @@ Releasing Blosc
 Preliminaries
 -------------
 
+- Switch to main branch::
+
+    $ git switch main
+
 - Make sure that ``RELEASE_NOTES.rst`` and ``ANNOUNCE.rst`` are up to
   date with the latest news in the release.
 
@@ -18,6 +22,7 @@ Preliminaries
 - Commit the changes::
 
     $ git commit -a -m"Getting ready for X.Y.Z release"
+    $ git push
 
 
 Testing
@@ -31,7 +36,7 @@ Create a new build/ directory, change into it and issue::
 
 To actually test Blosc the hard way, look at the end of:
 
-http://blosc.org/synthetic-benchmarks.html
+https://www.blosc.org/pages/synthetic-benchmarks/
 
 where instructions on how to intensively test (and benchmark) Blosc
 are given.
@@ -45,7 +50,7 @@ version::
   $ cd ../compat
   $ export LD_LIBRARY_PATH=../build/blosc
   $ gcc -o filegen filegen.c -L$LD_LIBRARY_PATH -lblosc -I../blosc
-  $ ./filegen compress lz4 blosc-lz4-1.y.z.cdata
+  $ ./filegen compress lz4 blosc-1.y.z-lz4.cdata
 
 In order to make sure that we are not breaking forward compatibility,
 link and run the `compat/filegen` utility against different versions of
@@ -58,7 +63,13 @@ You can compile the utility with different blosc shared libraries with::
 
 Then, test the file created with the new version with::
 
-  $ ./filegen decompress blosc-lz4-1.y.z.cdata
+  $ ./filegen decompress blosc-1.y.z-lz4.cdata
+
+If that works and you want to keep track of this for future compatibility checks
+just add the new file to the suite::
+
+  $ git add blosc-1.y.z-lz4.cdata
+  $ git commit -m"Add a new cdata file for compatibility checks"
 
 Repeat this for every codec shipped with Blosc (blosclz, lz4, lz4hc, snappy,
 zlib and zstd).
@@ -66,7 +77,7 @@ zlib and zstd).
 Tagging
 -------
 
-- Create a tag ``X.Y.Z`` from ``master``.  Use the next message::
+- Create a tag ``X.Y.Z`` from ``main``::
 
     $ git tag -a vX.Y.Z -m "Tagging version X.Y.Z"
 
@@ -79,15 +90,14 @@ Tagging
 Announcing
 ----------
 
-- Send an announcement to the blosc, pytables-dev, bcolz and
-  comp.compression lists.  Use the ``ANNOUNCE.rst`` file as skeleton
-  (possibly as the definitive version).
+- Send an announcement to the blosc and pytables-dev.  Use the
+  ``ANNOUNCE.rst`` file as skeleton (possibly as the definitive version).
 
 
 Post-release actions
 --------------------
 
-- Edit *VERSION* symbols in blosc/blosc.h in master to increment the
+- Edit *VERSION* symbols in blosc/blosc.h in main to increment the
   version to the next minor one (i.e. X.Y.Z --> X.Y.(Z+1).dev).
 
 - Create new headers for adding new features in ``RELEASE_NOTES.rst``
@@ -102,10 +112,3 @@ Post-release actions
 
 
 That's all folks!
-
-
-.. Local Variables:
-.. mode: rst
-.. coding: utf-8
-.. fill-column: 70
-.. End:

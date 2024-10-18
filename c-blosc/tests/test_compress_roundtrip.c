@@ -6,7 +6,7 @@
   Creation date: 2010-06-07
   Author: Francesc Alted <francesc@blosc.org>
 
-  See LICENSES/BLOSC.txt for details about copyright and rights to use.
+  See LICENSE.txt for details about copyright and rights to use.
 **********************************************************************/
 
 #include "test_common.h"
@@ -83,7 +83,7 @@ int main(int argc, char **argv)
     return EXIT_FAILURE;
   }
 
-  if (!blosc_test_parse_uint32_t(argv[2], &num_elements) || (num_elements < 1))
+  if (!blosc_test_parse_uint32_t(argv[2], &num_elements) || (num_elements < 0))
   {
     blosc_test_print_bad_arg_msg(2);
     return EXIT_FAILURE;
